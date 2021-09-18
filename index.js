@@ -8,7 +8,7 @@ import {
   dropPattern,
   grabDurationSeconds,
   dropDurationSeconds,
-} from "./utils";
+} from "./utils.js";
 
 // Create a new client instance
 const client = new Client({
