@@ -1,7 +1,6 @@
 // Regex
 export const dropPattern = /(^\<\@\d{18}\>) is dropping \d cards!$/gm;
-export const grabPattern =
-  /(^\<\@\d{18}\>) took the \*\*.*\*\* card `.*`! It's in \*\*.*\*\* condition.$/gm;
+export const grabPattern = /(^\<\@\d{18}\>) took the \*\*.*\*\* card `.*`!/;
 
 // Time
 export const grabDurationSeconds = 10 * 60 * 1000; // 10min
