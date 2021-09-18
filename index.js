@@ -18,9 +18,17 @@ const client = new Client({
 // When the client is ready, run this code (only once)
 client.once("ready", async (c) => {
   console.log(`Ready! Logged in as ${c.user.tag}`);
+  client.user.setStatus("online");
+  client.user.setActivity("KODHIT | mon help", { type: "WATCHING" });
 });
 
 client.on("messageCreate", async (message) => {
+  if (message.content === "mon help") {
+    message.channel.send(`
+      ตอนนี้ยังไม่มี 😏
+    `);
+  }
+
   if (grabPattern.test(message.content)) {
     await delay(grabDurationSeconds);
     message.channel.send(
