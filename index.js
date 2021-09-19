@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { Client, Intents } from "discord.js";
+import { Client, Intents, MessageEmbed } from "discord.js";
 import {
   getToken,
   getUserFromPattern,
@@ -10,10 +10,43 @@ import {
   dropDurationSeconds,
 } from "./utils.js";
 
+// side effect
+const state = {
+  prefix: "mon",
+  isDisabledDrop: false,
+  isDisabledGrab: false,
+};
+
+function getPrefix() {
+  return state.prefix;
+}
+
+function getIsDisabledDrop() {
+  return state.isDisabledDrop;
+}
+
+function getIsDisabledGrab() {
+  return state.isDisabledGrab;
+}
+
+function checkPrefix(val) {
+  return getPrefix() === val;
+}
+
 // Create a new client instance
 const client = new Client({
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
 });
+
+const getStatusEmbed = () =>
+  new MessageEmbed()
+    .setTitle("Status")
+    .setColor("#2ecc71")
+    .addFields(
+      { name: "Drop", value: state.isDisabledDrop ? "off" : "on" },
+      { name: "Grab", value: state.isDisabledGrab ? "off" : "on" }
+    )
+    .setTimestamp();
 
 // When the client is ready, run this code (only once)
 client.once("ready", async (c) => {
@@ -23,28 +56,46 @@ client.once("ready", async (c) => {
 });
 
 client.on("messageCreate", async (message) => {
-  if (message.content === "mon help") {
+  // TODO: make code better
+  // karuta
+  if (grabPattern.test(message.content) && !getIsDisabledGrab()) {
+    // grab
+    await delay(grabDurationSeconds);
+    message.channel.send(
+      `${getUserFromPattern(message.content)} **Grab** currently available 😉`
+    );
+  }
+
+  if (dropPattern.test(message.content) && !getIsDisabledDrop()) {
+    // drop
+    await delay(dropDurationSeconds);
+    message.channel.send(
+      `${getUserFromPattern(message.content)} **Drop** currently available 😗`
+    );
+  }
+
+  // mon command
+  const [prefix, command, value] = message.content.split(" ");
+  if (!checkPrefix(prefix)) return;
+
+  if (command === "help") {
     message.channel.send(`
       ตอนนี้ยังไม่มี 😏
     `);
   }
 
-  if (grabPattern.test(message.content)) {
-    await delay(grabDurationSeconds);
-    message.channel.send(
-      `🚨 ${getUserFromPattern(
-        message.content
-      )} **Grab** currently available 😉`
-    );
+  if (command === "drop" && (value === "on" || value === "off")) {
+    state.isDisabledDrop = value === "on" ? false : true;
+    message.channel.send(`**drop** is ${value}`);
   }
 
-  if (dropPattern.test(message.content)) {
-    await delay(dropDurationSeconds);
-    message.channel.send(
-      `🚨 ${getUserFromPattern(
-        message.content
-      )} **Drop** currently available 😗`
-    );
+  if (command === "grab" && (value === "on" || value === "off")) {
+    state.isDisabledGrab = value === "on" ? false : true;
+    message.channel.send(`**grab** is ${value}`);
+  }
+
+  if (command === "status") {
+    message.channel.send({ embeds: [getStatusEmbed()] });
   }
 });
 
