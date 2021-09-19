@@ -84,6 +84,7 @@ client.on("messageCreate", async (message) => {
 **mon drop <value>** (value are 'on' or 'off) -> set drop status
 **mon grab <value>** (value are 'on' or 'off) -> set grab status
 **mon reset** -> reset to default
+**mon cd** -> custom drop cool down
     `);
   }
 
@@ -105,6 +106,14 @@ client.on("messageCreate", async (message) => {
     state.isDisabledDrop = false;
     state.isDisabledGrab = false;
     message.channel.send(`**reset** to default (all on)`);
+  }
+
+  if (command === "cd") {
+    message.channel.send(`${message.author} see ya in 30min`);
+    await delay(dropDurationSeconds);
+    message.channel.send(
+      `${getUserFromPattern(message.content)} **Drop** currently available 😗`
+    );
   }
 });
 
