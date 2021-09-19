@@ -25,4 +25,4 @@ jobs:
         push: true
         tags: |
           kittn888/js-nonnmonn:${{ steps.get_version.outputs.VERSION }}
-          kittn888/js-nonnmonn-latest
+          kittn888/js-nonnmonn:latest
