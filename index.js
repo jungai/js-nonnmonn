@@ -80,7 +80,12 @@ client.on("messageCreate", async (message) => {
 
   if (command === "help") {
     message.channel.send(`
-      ตอนนี้ยังไม่มี 😏
+----------------------------------------------------------------
+**mon status** -> get currently status(drop, grab)
+**mon drop <value>** (value are 'on' or 'off) -> set drop status
+**mon grab <value>** (value are 'on' or 'off) -> set grab status
+**mon reset** -> reset to default
+----------------------------------------------------------------
     `);
   }
 
@@ -96,6 +101,12 @@ client.on("messageCreate", async (message) => {
 
   if (command === "status") {
     message.channel.send({ embeds: [getStatusEmbed()] });
+  }
+
+  if (command === "reset") {
+    state.isDisabledDrop = false;
+    state.isDisabledGrab = false;
+    message.channel.send(`**reset** to default (all on)}`);
   }
 });
 
