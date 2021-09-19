@@ -6,8 +6,10 @@ import {
   delay,
   grabPattern,
   dropPattern,
+  dailyPattern,
   grabDurationSeconds,
   dropDurationSeconds,
+  dailyDurationSeconds,
 } from "./utils.js";
 
 // side effect
@@ -74,6 +76,14 @@ client.on("messageCreate", async (message) => {
     );
   }
 
+  if (dailyPattern.test(message.content)) {
+    // daily
+    await delay(dailyDurationSeconds);
+    message.channel.send(
+      `${message.content.split(",")[0]} **Daily** currently available 😉`
+    );
+  }
+
   // mon command
   const [prefix, command, value] = message.content.split(" ");
   if (!checkPrefix(prefix)) return;
@@ -111,9 +121,7 @@ client.on("messageCreate", async (message) => {
   if (command === "cd") {
     message.channel.send(`${message.author} see ya in 30min`);
     await delay(dropDurationSeconds);
-    message.channel.send(
-      `${getUserFromPattern(message.content)} **Drop** currently available 😗`
-    );
+    message.channel.send(`${message.author} already 30 min 😏`);
   }
 });
 
