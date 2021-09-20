@@ -78,6 +78,7 @@ client.on("messageCreate", async (message) => {
 
   if (dailyPattern.test(message.content)) {
     // daily
+    message.channel.send(`see ya for next daily is available 🥳`);
     await delay(dailyDurationSeconds);
     message.channel.send(
       `${message.content.split(",")[0]} **Daily** currently available 😉`
