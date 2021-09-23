@@ -129,7 +129,7 @@ client.on("messageCreate", async (message) => {
 
   if (command === "count" && !Number.isNaN(parseInt(value, 10))) {
     message.channel.send(`${message.author} see ya in ${value} min`);
-    await delay(oneMinuteDurationSeconds * value);
+    await delay(oneMinuteDurationSeconds * parseInt(value, 10));
     message.channel.send(`${message.author} already ${val} min 😏`);
   }
 });
