@@ -7,6 +7,7 @@ export const dailyPattern = /you earned a daily reward/;
 export const grabDurationSeconds = 10 * 60 * 1000; // 10min
 export const dropDurationSeconds = 10 * 60 * 3000; // 30min
 export const dailyDurationSeconds = 10 * 60 * 144000; // 1day
+export const oneMinuteDurationSeconds = 60000; // 1min
 
 // Env
 function getEnv(key) {

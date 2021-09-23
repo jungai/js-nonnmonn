@@ -10,6 +10,7 @@ import {
   grabDurationSeconds,
   dropDurationSeconds,
   dailyDurationSeconds,
+  oneMinuteDurationSeconds,
 } from "./utils.js";
 
 // side effect
@@ -96,6 +97,7 @@ client.on("messageCreate", async (message) => {
 **mon grab <value>** (value are 'on' or 'off) -> set grab status
 **mon reset** -> reset to default
 **mon cd** -> custom drop cool down
+**mon count <minute> -> timer (1,2,3,4,5,....)
     `);
   }
 
@@ -123,6 +125,12 @@ client.on("messageCreate", async (message) => {
     message.channel.send(`${message.author} see ya in 30min`);
     await delay(dropDurationSeconds);
     message.channel.send(`${message.author} already 30 min 😏`);
+  }
+
+  if (command === "count" && !Number.isNaN(parseInt(value, 10))) {
+    message.channel.send(`${message.author} see ya in ${value} min`);
+    await delay(oneMinuteDurationSeconds * value);
+    message.channel.send(`${message.author} already ${val} min 😏`);
   }
 });
 
