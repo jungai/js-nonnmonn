@@ -87,7 +87,7 @@ client.on("messageCreate", async (message) => {
   }
 
   // mon command
-  const [prefix, command, value] = message.content.split(" ");
+  const [prefix, command, value, msg] = message.content.split(" ");
   if (!checkPrefix(prefix)) return;
 
   if (command === "help") {
@@ -97,7 +97,7 @@ client.on("messageCreate", async (message) => {
 **mon grab <value>** (value are 'on' or 'off) -> set grab status
 **mon reset** -> reset to default
 **mon cd** -> custom drop cool down
-**mon count <minute>** -> timer (1,2,3,4,5,....)
+**mon count <minute>** msg? -> timer (1,2,3,4,5,....)
     `);
   }
 
@@ -130,7 +130,11 @@ client.on("messageCreate", async (message) => {
   if (command === "count" && !Number.isNaN(parseInt(value, 10))) {
     message.channel.send(`${message.author} see ya in ${value} min`);
     await delay(oneMinuteDurationSeconds * parseInt(value, 10));
-    message.channel.send(`${message.author} already ${value} min 😏`);
+    message.channel.send(
+      msg
+        ? `${message.author} -> ${msg}`
+        : `${message.author} already ${value} min 😏`
+    );
   }
 });
 
