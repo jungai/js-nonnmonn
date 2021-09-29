@@ -16,13 +16,15 @@ import {
 
 // side effect
 const state = {
-  prefix: "mon",
   isDisabledDrop: false,
   isDisabledGrab: false,
+  alias: undefined,
 };
 
-function getPrefix() {
-  return state.prefix;
+const prefixes = () => ["mon", state.alias];
+
+function changeAlias(alias) {
+  state.alias = alias;
 }
 
 function getIsDisabledDrop() {
@@ -33,12 +35,8 @@ function getIsDisabledGrab() {
   return state.isDisabledGrab;
 }
 
-function checkPrefix(val) {
-  return getPrefix() === val;
-}
-
-function changePrefix(prefix) {
-  state.prefix = prefix;
+function checkPrefixes(val) {
+  return prefixes().includes(val);
 }
 
 // Create a new client instance
@@ -64,6 +62,7 @@ const helpEmbed = () =>
         value: "set grab status (value are 'on' or 'off)",
       },
       { name: "mon cd", value: "count for drop(30min)" },
+      { name: "mon vi", value: "count for vi(2hr)" },
       {
         name: "mon count <minute> msg?",
         value: "timer (1,2,3,4,5,....) for minute",
@@ -71,6 +70,10 @@ const helpEmbed = () =>
       {
         name: "mon count <number>hr msg?",
         value: "timer (1,2,3,4,5,....) for hour",
+      },
+      {
+        name: "mon alias <alias>",
+        value: "change alias",
       }
     )
     .setTimestamp();
@@ -83,7 +86,8 @@ const statusEmbed = () =>
       "https://media0.giphy.com/media/oO9aEGGiTLtwDBe5OI/giphy.gif?cid=790b7611f20c39b756bee66bd03d1c8ca60c642fde23aaf3&rid=giphy.gif&ct=g"
     )
     .addFields(
-      { name: "Prefix", value: state.prefix || "not set" },
+      { name: "Prefix", value: prefixes()[0] },
+      { name: "Alias", value: prefixes()[1] || "not set" },
       { name: "Drop", value: state.isDisabledDrop ? "off" : "on" },
       { name: "Grab", value: state.isDisabledGrab ? "off" : "on" }
     )
@@ -126,17 +130,17 @@ client.on("messageCreate", async (message) => {
 
   // mon command
   const [prefix, command, value, msg] = message.content.split(" ");
-  if (!checkPrefix(prefix)) return;
+  if (!checkPrefixes(prefix)) return;
 
   if (command === "help") {
     message.channel.send({ embeds: [helpEmbed()] });
     return;
   }
 
-  if (command === "prefix") {
-    changePrefix(value);
+  if (command === "alias") {
+    changeAlias(value);
 
-    message.channel.send(`add prefix -> ${value}`);
+    message.channel.send(`add alias -> ${value}`);
     return;
   }
 
@@ -161,6 +165,13 @@ client.on("messageCreate", async (message) => {
     message.channel.send(`${message.author} see ya in 30min`);
     await delay(dropDurationSeconds);
     message.channel.send(`${message.author} already 30 min 😏`);
+    return;
+  }
+
+  if (command === "vi") {
+    message.channel.send(`${message.author} see ya in 2 hours`);
+    await delay(oneHourDurationSeconds * 2);
+    message.channel.send(`${message.author} vi kub`);
     return;
   }
 
