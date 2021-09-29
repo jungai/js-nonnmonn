@@ -11,6 +11,7 @@ import {
   dropDurationSeconds,
   dailyDurationSeconds,
   oneMinuteDurationSeconds,
+  oneHourDurationSeconds,
 } from "./utils.js";
 
 // side effect
@@ -36,16 +37,53 @@ function checkPrefix(val) {
   return getPrefix() === val;
 }
 
+function changePrefix(prefix) {
+  state.prefix = prefix;
+}
+
 // Create a new client instance
 const client = new Client({
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
 });
 
-const getStatusEmbed = () =>
+const helpEmbed = () =>
+  new MessageEmbed()
+    .setColor("#0099ff")
+    .setTitle("Help")
+    .setThumbnail(
+      "https://media3.giphy.com/media/26Ff4P2zcsiIi6fQY/giphy.gif?cid=ecf05e47ocriucm3ha0ikjwwirjxjshcdv4jwajouf0uln4t&rid=giphy.gif&ct=g"
+    )
+    .addFields(
+      { name: "mon status", value: "get currently status(drop, grab, alias)" },
+      {
+        name: "mon drop <value>",
+        value: "set drop status (value are 'on' or 'off)",
+      },
+      {
+        name: "mon grab <value>",
+        value: "set grab status (value are 'on' or 'off)",
+      },
+      { name: "mon cd", value: "count for drop(30min)" },
+      {
+        name: "mon count <minute> msg?",
+        value: "timer (1,2,3,4,5,....) for minute",
+      },
+      {
+        name: "mon count <number>hr msg?",
+        value: "timer (1,2,3,4,5,....) for hour",
+      }
+    )
+    .setTimestamp();
+
+const statusEmbed = () =>
   new MessageEmbed()
     .setTitle("Status")
     .setColor("#2ecc71")
+    .setThumbnail(
+      "https://media0.giphy.com/media/oO9aEGGiTLtwDBe5OI/giphy.gif?cid=790b7611f20c39b756bee66bd03d1c8ca60c642fde23aaf3&rid=giphy.gif&ct=g"
+    )
     .addFields(
+      { name: "Prefix", value: state.prefix || "not set" },
       { name: "Drop", value: state.isDisabledDrop ? "off" : "on" },
       { name: "Grab", value: state.isDisabledGrab ? "off" : "on" }
     )
@@ -91,43 +129,56 @@ client.on("messageCreate", async (message) => {
   if (!checkPrefix(prefix)) return;
 
   if (command === "help") {
-    message.channel.send(`
-**mon status** -> get currently status(drop, grab)
-**mon drop <value>** (value are 'on' or 'off) -> set drop status
-**mon grab <value>** (value are 'on' or 'off) -> set grab status
-**mon reset** -> reset to default
-**mon cd** -> custom drop cool down
-**mon count <minute>** msg? -> timer (1,2,3,4,5,....)
-    `);
+    message.channel.send({ embeds: [helpEmbed()] });
+    return;
+  }
+
+  if (command === "prefix") {
+    changePrefix(value);
+
+    message.channel.send(`add prefix -> ${value}`);
+    return;
   }
 
   if (command === "drop" && (value === "on" || value === "off")) {
     state.isDisabledDrop = value === "on" ? false : true;
     message.channel.send(`**drop** is ${value}`);
+    return;
   }
 
   if (command === "grab" && (value === "on" || value === "off")) {
     state.isDisabledGrab = value === "on" ? false : true;
     message.channel.send(`**grab** is ${value}`);
+    return;
   }
 
   if (command === "status") {
-    message.channel.send({ embeds: [getStatusEmbed()] });
-  }
-
-  if (command === "reset") {
-    state.isDisabledDrop = false;
-    state.isDisabledGrab = false;
-    message.channel.send(`**reset** to default (all on)`);
+    message.channel.send({ embeds: [statusEmbed()] });
+    return;
   }
 
   if (command === "cd") {
     message.channel.send(`${message.author} see ya in 30min`);
     await delay(dropDurationSeconds);
     message.channel.send(`${message.author} already 30 min 😏`);
+    return;
   }
 
-  if (command === "count" && !Number.isNaN(parseInt(value, 10))) {
+  if (command === "count") {
+    const [hours, empty] = value.split("hr");
+    if (!Number.isNaN(parseInt(hours, 10)) && empty === "") {
+      message.channel.send(`${message.author} see ya in ${hours} hours`);
+      await delay(oneHourDurationSeconds * parseInt(hours, 10));
+      message.channel.send(
+        msg
+          ? `${message.author} -> ${msg}`
+          : `${message.author} already ${hours} hours 😏`
+      );
+      return;
+    }
+  }
+
+  if (!Number.isNaN(parseInt(value, 10))) {
     message.channel.send(`${message.author} see ya in ${value} min`);
     await delay(oneMinuteDurationSeconds * parseInt(value, 10));
     message.channel.send(
@@ -135,6 +186,7 @@ client.on("messageCreate", async (message) => {
         ? `${message.author} -> ${msg}`
         : `${message.author} already ${value} min 😏`
     );
+    return;
   }
 });
 

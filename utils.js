@@ -8,6 +8,7 @@ export const grabDurationSeconds = 10 * 60 * 1000; // 10min
 export const dropDurationSeconds = 10 * 60 * 3000; // 30min
 export const dailyDurationSeconds = 84600000; // 23.5hr
 export const oneMinuteDurationSeconds = 60000; // 1min
+export const oneHourDurationSeconds = 3600000; // 1hour
 
 // Env
 function getEnv(key) {
