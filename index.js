@@ -109,6 +109,8 @@ client.on("messageCreate", async (message) => {
     message.channel.send(
       `${getUserFromPattern(message.content)} **Grab** currently available 😉`
     );
+
+    return;
   }
 
   if (dropPattern.test(message.content) && !getIsDisabledDrop()) {
@@ -117,6 +119,8 @@ client.on("messageCreate", async (message) => {
     message.channel.send(
       `${getUserFromPattern(message.content)} **Drop** currently available 😗`
     );
+
+    return;
   }
 
   if (dailyPattern.test(message.content)) {
@@ -126,6 +130,15 @@ client.on("messageCreate", async (message) => {
     message.channel.send(
       `${message.content.split(",")[0]} **Daily** currently available 😉`
     );
+
+    return;
+  }
+
+  if (message?.embeds[0]?.title === "Purchase Gems") {
+    message.suppressEmbeds(true);
+    message.channel.send("อย่าเติมเลยค้าบบ 😅");
+
+    return;
   }
 
   // mon command
