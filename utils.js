@@ -2,6 +2,8 @@
 export const dropPattern = /(^\<\@\d{18}\>) is dropping \d cards!$/gm;
 export const grabPattern = /(^\<\@\d{18}\>) took the \*\*.*\*\* card `.*`!/;
 export const dailyPattern = /you earned a daily reward/;
+export const purchasePattern =
+  /(^\<\@\d{18}\>), please follow this link to complete your purchase/;
 
 // Time
 export const grabDurationSeconds = 10 * 60 * 1000; // 10min

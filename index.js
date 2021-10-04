@@ -7,6 +7,7 @@ import {
   grabPattern,
   dropPattern,
   dailyPattern,
+  purchasePattern,
   grabDurationSeconds,
   dropDurationSeconds,
   dailyDurationSeconds,
@@ -130,6 +131,13 @@ client.on("messageCreate", async (message) => {
     message.channel.send(
       `${message.content.split(",")[0]} **Daily** currently available 😉`
     );
+
+    return;
+  }
+
+  if (purchasePattern.test(message.content)) {
+    message.delete();
+    message.channel.send("ก็บอกว่าอย่าเติมมม 😡");
 
     return;
   }
